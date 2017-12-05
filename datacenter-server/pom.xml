@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>datacenter</artifactId>
+        <groupId>com.wutong</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>datacenter-server</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.wutong</groupId>
+            <artifactId>datacenter-client</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.itcast.parasol</groupId>
+            <artifactId>parasol-pojo</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.slf4j</groupId>
+            		<artifactId>slf4j-log4j12</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.activemq</groupId>
+            		<artifactId>activemq-all</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.activemq</groupId>
+            		<artifactId>activemq-pool</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>cn.itcast.parasol</groupId>
+        	<artifactId>parasol-interface</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
+        	<exclusions>
+        		<exclusion>
+        			<groupId>org.slf4j</groupId>
+        			<artifactId>slf4j-log4j12</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>org.apache.activemq</groupId>
+        			<artifactId>activemq-all</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>org.apache.activemq</groupId>
+        			<artifactId>activemq-pool</artifactId>
+        		</exclusion>
+        	</exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>com.alipay</groupId>
+        	<artifactId>alipay-sdk</artifactId>
+        	<version>java20171027120314</version>
+        	<scope>system</scope>
+        	<systemPath>${basedir}/lib/alipay-sdk-java20171027120314.jar</systemPath>
+        </dependency>
+    </dependencies>
+
+
+</project>

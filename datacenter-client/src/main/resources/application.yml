@@ -1,0 +1,10 @@
+spring:
+  rabbitmq:
+    addresses: 127.0.0.1:5672
+    username: wutongsd
+    password: wutong2017
+    publisher-confirms: true
+    virtual-host: /
+
+rabbit: 
+  topics: refund_deposit_apply, refund_deposit
