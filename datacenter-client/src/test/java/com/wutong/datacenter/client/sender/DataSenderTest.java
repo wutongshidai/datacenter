@@ -18,14 +18,14 @@ public class DataSenderTest {
     @Autowired
     public DataCenterClient dataCenterClient;
 
-    private String[] orderIds = {"201711174a03c08d"};//, "201711173768ce6a", "201711174a03c08d", "20171117cbe5aad3"};
+    private String[] orderIds = {"2017121456f8ec1e"};//, "201711173768ce6a", "201711174a03c08d", "20171117cbe5aad3"};
 
     @Test
     public void testSend() {
         for (int i = 0; i < orderIds.length; i++) {
             Map<String, String> data = new HashMap<>();
             data.put("bidOrderId", String.valueOf(orderIds[i]));
-            data.put("refundUserId", "1");
+            data.put("refundUserId", "77");
 //            data.put("refundStatus", "1");
             Message message = new Message();
             message.setTopic("refund_deposit_apply");

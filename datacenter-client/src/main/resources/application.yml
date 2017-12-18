@@ -1,8 +1,11 @@
 spring:
   rabbitmq:
-    addresses: 127.0.0.1:5672
-    username: wutongsd
-    password: wutong2017
+    #addresses: 127.0.0.1:5672
+    #username: wutongsd
+    #password: wutong2017
+    addresses: 192.168.3.189:5672
+    username: wutong
+    password: 111111
     publisher-confirms: true
     virtual-host: /
 

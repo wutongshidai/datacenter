@@ -1,8 +1,10 @@
 spring:
   rabbitmq:
-    addresses: 127.0.0.1:5672
-    username: wutongsd
-    password: wutong2017
+    addresses: 192.168.3.189:5672
+    #username: wutongsd
+    #password: wutong2017
+    username: wutong
+    password: 111111
     publisher-confirms: true
     virtual-host: /
   dubbo:
@@ -13,12 +15,30 @@ spring:
       name: wutong-datacenter
     module:
       default: false
+   
+tasks: 
+  refund: 
+    alipay: 
+      delay: 0 # 任务执行延迟时间，小时单位
+  
+redis: 
+  address: redis://127.0.0.1:6379
 
 rabbit: 
-  topics: refund_deposit_apply, refund_deposit, alipay_refund, refund_deposit_success, refund_deposit_apply_success, process_bid_order_after_refund
+  topics: refund_deposit_apply, refund_deposit, ALIPAY_refund, refund_deposit_success, refund_deposit_error, refund_deposit_apply_success, process_bid_order_after_refund, WXPAY_PC_refund
   
 alipay: 
   app-id: 2017101709350400 
   private-key: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDaAfQTFvp4LbOR51VmtY1XYzZ/j5uWQPE3EArO+mzZ0aEL06HUD9T9zyZxQR3oBzVYGJebN7Didrm6Yev+N8HyTEljV2EhWJ0aVt27g2ZeKUIra8ce9lx+w/zAB8GKvoMT5wXOVT4BU6BM0bTGHCCNSuIZxXItTNd7HnM9uQ4G8qX22mG1+4Z6T/8eE+z7Jq4VoNFchtTXwPQJFCwjFZ/dte3SShyh32XOwOae4ftRQ51eB//P4HFWgSQQ7KRh5+yzs5FvnyliU/RMoQBKiQMB8yumXCFA4z4d5jRtE4Ah4GCQRZZJyWTQMQaviwFhT5OBxpKPReA5RDzBmtYf0bRnAgMBAAECggEBAJ5v3v9kqsFejWuTETjk5wTEgN3x82QebG/VA9Xqn+Mpe35J3wlsPCH9Q3X5mg9/9Z/Bt6TBs5bSLCatdcI6qYQ7NvawkVGXwg1bZigZ1fLGz2UZHgx9hTlHnE+/E0SPMlnrgweyYa67JPvPSC7WUD3/VxTdrx4HA29h8OTBsdUPembQ/uz3BQXMpTc4DMBVFQGKIijUPJFlRUhlnNVOWe2dkQqKXMOZctFnQuQadSgJHKj7+ojzFbMPeWuDo+qniDT+lyrxCd7a55kd0R62dnR2dwBbSD+0kBjep9qnCyr8OIT5XW8XmHpO5ER1bmFHNsVEOHXXw5IxvwQfWkpshvECgYEA8MC7UaVJrjuYpl/KEtY8H4v5dyQhCnewnNmGEJqjAC0CD6vw5tm/1Fwb4kkYC8xWQ3hRkHmGd8GnEkhyPhk5WOeAfwAPO/sHQ1hbCCgw4GJYb79Z6UMlScSHSC6TkDAxbYYseEcigtzumbAHTQw973r02xQGlFZpQhFywHWGSukCgYEA59B1cvwSVEVvw5M5OlCX585CBYBvWa1DmNz4fyKhZmvOBhWlhVzDrrF+G0tslrffyV8qUICE+G+SHQhlVUVWG4xPNsiBK0C27Fix/gWtSzyGPhJ1KD4r8nBOhSshFnn2GAn/IgR+zJHKGycpQyIyqIiYfIuqkkU4JA8qkiuI0s8CgYB9gLslkLicL00gTgcVUsD84Qcm6JqgzkwvN+X/ed1HFi9g5A0tCo5JscqHZ/s1C0xc17gNTIygmT7y9Pk5DgUrJ2OA0RMf/XiHzuOFmQ4BqsLXXjUMuIgTsHOlWUJrg/QAWFWOTebbuThYvb7Ql3UiBkLmgcX8Rh+Q5W+gjKN5IQKBgBgMkVK3gfNKLNkeWe6J0+iRhlnpxCOKjRu7uO//mLz2bC5Hap+WSxrBgTK1tXNBai8K92nYm3LmqELozxJ0mgVLniAx1uy0zwVgAj83OY43njmsUok1Qfvp2MuJ+OnLB1PhHZ3a14jDizMb8fTsBFNlsGQjXTPFiJh9Fk6Jw60TAoGBAJhD/2WNm3mPdv54VOTp0vcVIg2sk1roEfIR751/G1ECS+pX9X+effD6bzwoeq3z3U2RCruZx7rVDeWmEftt3G/dgTNMuxGcvkbbWWehfU7LfJGhHfwbW6SO6xdv+nScIDZyvF51prBRYZJfw7WHoJQL4eSG0lyNnjs9TWClMJgg
   public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2gH0Exb6eC2zkedVZrWNV2M2f4+blkDxNxAKzvps2dGhC9Oh1A/U/c8mcUEd6Ac1WBiXmzew4na5umHr/jfB8kxJY1dhIVidGlbdu4NmXilCK2vHHvZcfsP8wAfBir6DE+cFzlU+AVOgTNG0xhwgjUriGcVyLUzXex5zPbkOBvKl9tphtfuGek//HhPs+yauFaDRXIbU18D0CRQsIxWf3bXt0kocod9lzsDmnuH7UUOdXgf/z+BxVoEkEOykYefss7ORb58pYlP0TKEASokDAfMrplwhQOM+HeY0bROAIeBgkEWWSclk0DEGr4sBYU+TgcaSj0XgOUQ8wZrWH9G0ZwIDAQAB
   alipay-public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmeVsQy02antKd6QTXDY7fGv6TZI3WuF1oIHZ70zOcV2UUUkUtEV+IAg4MvVpY8fTh1GNVx9WRhtb2hn1FxB3m+4MPy0DWwefLc8ASHGkWX/tA4YNr9iZt1KP2N/1SX7tEb/tDHOYc+9PCs5JrW0W/jB6Bl/re+N983xZbVpxBbu2tqM4Zt/+8bXEDFyfe1rf0hdnlN0eGCRbgAKYONhUR0tLlF5hU9KYqsRBoOrJJmyA5A/p1vE8mRoyfqd9hN3fchaAq+1qGmVS0D+ayvrljaNYRnwKwD72iouVX1aYiH77EFa8nCtpslwt2Tzi+b1ojVOARE3tuoilUCOHUmvrwQIDAQAB
+  
+  
+  
+weixin: 
+  app-id: wx3016335d2d4d60c6
+  mch-id: 1493205162
+  mch-key: 329E8AA366CFC70F93747A74D8EB1BA6
+  notify-url: http://aimeryaya.oicp.io:21593/api/wxpay/callback
+  trade-type: NATIVE
+  key-path: F:\\devtools\\cert\\apiclient_cert.p12
