@@ -1,33 +1,18 @@
 package com.wutong.datacenter.service;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.alipay.api.AlipayApiException;
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
-import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
-import com.parasol.core.refund.BidRefundOrder;
-import com.parasol.core.service.AlipayService;
-import com.parasol.core.service.BidRefundOrderService;
-import com.parasol.core.service.PurseInfoService;
 import com.wutong.datacenter.client.sender.DataCenterClient;
-import com.wutong.datacenter.configuration.AlipayProperties;
 import com.wutong.datacenter.core.Message;
 import com.wutong.wxpay.core.exception.WxPayException;
 import com.wutong.wxpay.core.request.WxPayRefundRequest;
 import com.wutong.wxpay.core.result.WxPayRefundResult;
 import com.wutong.wxpay.core.service.WxPayService;
-
-import net.sf.json.JSONObject;
 
 /**
  * 支付宝支付服务

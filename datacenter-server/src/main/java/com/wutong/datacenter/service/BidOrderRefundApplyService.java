@@ -1,15 +1,12 @@
 package com.wutong.datacenter.service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.alibaba.fastjson.JSONObject;
 import com.parasol.core.bid.Bid_order;
-import com.parasol.core.purse.PurseInfo;
 import com.parasol.core.refund.BidOrderRefundTask;
 import com.parasol.core.refund.BidRefundOrder;
 import com.parasol.core.service.BidOrderRefundTaskService;
 import com.parasol.core.service.BidRefundOrderService;
 import com.parasol.core.service.BidService;
-import com.parasol.core.service.PurseInfoService;
 import com.wutong.datacenter.client.sender.DataCenterClient;
 import com.wutong.datacenter.configuration.AlipayRefundProperties;
 import com.wutong.datacenter.configuration.RedisProperties;
@@ -115,8 +112,12 @@ public class BidOrderRefundApplyService {
 						//创建订单退款任务
 						BidOrderRefundTask bidOrderRefundTask = new BidOrderRefundTask();
 						bidOrderRefundTask.setBidOrderId(bidOrder.getId());
+						String paramCode = OrderUtil.getBidOrderId();
+						bidOrderRefundTask.setParamCode(paramCode);
 						int taskId = bidOrderRefundTaskService.create(bidOrderRefundTask);
 						refundOperateData.put("refundTaskId", String.valueOf(taskId));
+						refundOperateData.put("paramCode", paramCode);
+						
 						refundOperateMessage.setTopic("refund_deposit");
 						refundOperateMessage.setData(refundOperateData);
 						
@@ -153,6 +154,8 @@ public class BidOrderRefundApplyService {
 		String refundOrderId = data.get("refundOrderId");
 		int refundStatus = Integer.valueOf(data.get("refundStatus"));
 		int rows = bidRefundOrderService.updateRefundOrderStatus(refundOrderId, refundStatus);
+		int refundTaskId = Integer.valueOf(message.getData().get("refundTaskId").toString());
+		bidOrderRefundTaskService.updateStatus(refundTaskId, 1);
 		System.out.println("订单状态更新" + (rows > 0 ? "成功" : "失败"));
 		message.setTopic("process_bid_order_after_refund");
 		dataCenterClient.send(message);
@@ -170,6 +173,8 @@ public class BidOrderRefundApplyService {
 		String refundOrderId = data.get("refundOrderId");
 		int refundStatus = Integer.valueOf(data.get("refundStatus"));
 		int rows = bidRefundOrderService.updateRefundOrderStatus(refundOrderId, refundStatus);
+		int refundTaskId = Integer.valueOf(message.getData().get("refundTaskId").toString());
+		bidOrderRefundTaskService.updateStatus(refundTaskId, 8);
 		System.out.println("订单状态更新" + (rows > 0 ? "成功" : "失败"));
 		message.setTopic("process_bid_order_after_refund");
 		dataCenterClient.send(message);
@@ -195,9 +200,6 @@ public class BidOrderRefundApplyService {
 	}
 	
 	
-	@Reference
-	private PurseInfoService purseInfoService;
-	
 	@RabbitHandler
 	@RabbitListener(queues="refund_deposit")
 	public void processDeposit(Message message) {
@@ -209,21 +211,26 @@ public class BidOrderRefundApplyService {
 		BidRefundOrder bidRefundOrder = findRefundOrder(refundOrderId);
 		
 		//验证退款任务有效
-
-		double amount = bidRefundOrder.getRefundAmount();
-		String payChannel = String.valueOf(message.getData().get("payChannel"));
-
-		//发送退款指令给指定支付渠道
-		Message payMessage = new Message();
-		Map<String, String> data = (Map<String, String>) message.getData();
-//		data.put("account", account);
-		data.put("amount", String.valueOf(amount));
-		data.put("refundOrderId", String.valueOf(refundOrderId));
-		data.put("bidOrderId", String.valueOf(bidOrderId));
-		payMessage.setTopic(payChannel + "_refund");
-		payMessage.setData(data);
-		dataCenterClient.send(payMessage);
+		int refundTaskId = Integer.valueOf(message.getData().get("refundTaskId").toString());
+		BidOrderRefundTask task = bidOrderRefundTaskService.findById(refundTaskId);
+		if (task != null && task.getStatus().intValue() == 0) {
+			boolean result = bidOrderRefundTaskService.updateStatus(refundTaskId, 9);//变更状态为执行中
+			if (result) {
+				double amount = bidRefundOrder.getRefundAmount();
+				String payChannel = String.valueOf(message.getData().get("payChannel"));
 		
+				//发送退款指令给指定支付渠道
+				Message payMessage = new Message();
+				Map<String, String> data = (Map<String, String>) message.getData();
+		//		data.put("account", account);
+				data.put("amount", String.valueOf(amount));
+				data.put("refundOrderId", String.valueOf(refundOrderId));
+				data.put("bidOrderId", String.valueOf(bidOrderId));
+				payMessage.setTopic(payChannel + "_refund");
+				payMessage.setData(data);
+				dataCenterClient.send(payMessage);
+			}
+		}
 		//step2 查询用户绑定的默认退款账号
 //		int refundTargetUserId = bidRefundOrder.getRefundTargetUserId();
 //		//step3 根据账号类型选择退款通道
@@ -256,10 +263,6 @@ public class BidOrderRefundApplyService {
 		return bidRefundOrderService.findById(refundOrderId);
 	}
 
-	private PurseInfo findDefault(int userId) {
-		return purseInfoService.findDefault(userId);
-	}
-	
 
 	/**
 	 * 根据保证金订单编号查询订单
